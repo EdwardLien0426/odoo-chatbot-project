@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Website frontend nav menu item -->
+    <record id="menu_chatbot_website" model="website.menu">
+        <field name="name">Chatbot</field>
+        <field name="url">/chatbot</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- Backend: open chatbot in new tab -->
+    <record id="action_open_chatbot" model="ir.actions.act_url">
+        <field name="name">Go to Chatbot</field>
+        <field name="url">/chatbot</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_website_go_to_chatbot"
+        name="Go to Chatbot"
+        parent="website.menu_website_configuration"
+        action="action_open_chatbot"
+        sequence="50"/>
+</odoo>
