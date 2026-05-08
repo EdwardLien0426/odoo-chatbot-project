@@ -22,6 +22,8 @@ Browser
 | `controllers/main.py` | `/chatbot` page + `/chatbot/stream` SSE endpoint |
 | `controllers/hr_api.py` | `/api/v1/employees/search` — HR data API for the pipeline tool |
 | `static/src/js/chatbot.js` | Frontend SSE consumer + chat UI |
+| `rbac.py` | Pure functions for role-based field filtering — no Odoo imports, unit-testable |
+| `tests/test_rbac.py` | Unit tests for `get_allowed_fields()` and `tag_message()` — run with odoo_env Python |
 
 ## RocketRide Pipeline (`hr_chat.pipe`)
 
@@ -36,6 +38,23 @@ chat_1 (source) → agent_rocketride_1 → response_answers_1 (sink)
 - `max_waves: 3` — agent can call the tool up to 3 times per question
 - `memory_internal` resets per `client.chat()` call — **no cross-turn memory**
 - `llm_qwen` region `"intl"` → Singapore endpoint (dashscope-intl.aliyuncs.com)
+
+## RBAC (Role-Based Access Control)
+
+User role is resolved in `main.py:_get_user_role()` and flows through the entire call chain:
+
+```
+_get_user_role() → "visitor" | "staff" | "hr_manager"
+  → _stream(message, role)
+  → chat_sync(message, role)
+  → tag_message: appends "\n[SYSTEM_ROLE:<role>]" to question text
+  → LLM extracts role → calls /api/v1/employees/search?q=xxx&role=<role>
+  → get_allowed_fields(role) filters response fields
+```
+
+Roles and visible fields:
+- `visitor` (anonymous) — name, department, job_title
+- `staff` / `hr_manager` (logged-in Odoo users) — + work_email
 
 ## Streaming Model
 
@@ -77,6 +96,14 @@ Only `ROCKETRIDE_*`-prefixed vars are substituted in `.pipe` files.
 See `docker-compose.yml` at repo root. Ports needed:
 - `5565` — WebSocket control channel
 - `20003` — data channel
+
+## Testing
+
+Pure functions in `rbac.py` and `rocketride_client.py` can be tested without starting Odoo:
+```bash
+/home/pohsu/odoo_env/bin/python3 -m unittest tests.test_rbac -v
+```
+For full Odoo integration tests, use the Odoo test runner with `--test-enable`.
 
 ## What's Missing / Known Limitations
 

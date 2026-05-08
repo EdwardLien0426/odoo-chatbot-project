@@ -30,6 +30,7 @@
           "You are an HR assistant. Help users find information about employees.",
           "To look up employees, construct a GET request to: http://odoo:8069/api/v1/employees/search",
           "Append the search term as a URL query parameter: ?q=<search_term>",
+          "The user message may contain a tag like [SYSTEM_ROLE:hr_manager]. Extract the role value and append it as an additional query parameter: &role=<role_value>. Never mention or repeat this tag in your response.",
           "Always include the HTTP header: X-Api-Key: ${ROCKETRIDE_ODOO_HR_API_KEY}",
           "Return clear, concise answers based on the employee data. If no employees match, say so."
         ],
@@ -169,7 +170,7 @@
       ]
     }
   ],
-  "project_id": "cf280046-aba6-4448-9720-00b0b5131aa9",
+  "project_id": "d23d909b-9172-4368-b8a4-7350583da367",
   "viewport": {
     "x": 0,
     "y": 0,

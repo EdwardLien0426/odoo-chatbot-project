@@ -61,10 +61,14 @@ def get_client() -> tuple[RocketRideClient, str, asyncio.AbstractEventLoop]:
     return _client, _token, _loop
 
 
-def chat_sync(question_text: str) -> str:
+def tag_message(text: str, role: str) -> str:
+    return f"{text}\n[SYSTEM_ROLE:{role}]"
+
+
+def chat_sync(question_text: str, user_role: str = "visitor") -> str:
     client, token, loop = get_client()
     q = Question()
-    q.addQuestion(question_text)
+    q.addQuestion(tag_message(question_text, user_role))
     future = asyncio.run_coroutine_threadsafe(
         client.chat(token=token, question=q),
         loop,

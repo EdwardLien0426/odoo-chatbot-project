@@ -82,6 +82,7 @@ RocketRide AI Pipeline  (hr_chat.pipe)
 - **Live ERP data** — answers come from your actual Odoo database, not a static knowledge base
 - **Streaming responses** — word-by-word output for a responsive feel
 - **Public-facing** — no Odoo login required for visitors
+- **Role-based access** — visitors see public info only; logged-in staff and HR managers see work emails
 - **Swappable LLM** — change from Qwen to OpenAI, Anthropic, or a local Ollama model by editing one pipeline file
 - **Extensible pipeline** — add new data sources (calendar, inventory, CRM) as new tool nodes in RocketRide
 
@@ -96,6 +97,8 @@ website_llm_chat/
 │   └── hr_api.py        # /api/v1/employees/search — HR data API
 ├── pipelines/
 │   └── hr_chat.pipe     # RocketRide pipeline definition
+├── tests/
+│   └── test_rbac.py     # Unit tests for RBAC pure functions
 ├── static/src/
 │   ├── js/chatbot.js    # Frontend SSE consumer + chat UI
 │   └── css/chatbot.css
@@ -103,6 +106,7 @@ website_llm_chat/
 │   ├── templates.xml    # Chatbot page template
 │   └── menu.xml         # Website navigation entry
 ├── rocketride_client.py # Async RocketRide WebSocket client
+├── rbac.py              # Role → allowed fields mapping (pure, no Odoo imports)
 ├── __manifest__.py
 └── CLAUDE.md            # Architecture notes
 ```
@@ -167,7 +171,7 @@ No changes to core application logic required.
 ## Roadmap
 
 - [ ] Conversation memory (multi-turn context)
-- [ ] Role-based access (visitor vs. staff assistant)
+- [x] Role-based access (visitor vs. staff / HR manager)
 - [ ] MCP Server integration — expose Odoo tools to Claude Desktop / Cursor
 - [ ] Calendar & appointment queries
 - [ ] True token-level streaming from LLM

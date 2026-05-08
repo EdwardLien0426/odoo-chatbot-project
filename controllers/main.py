@@ -16,14 +16,24 @@ class WebsiteLLMChatController(http.Controller):
     def chatbot_page(self):
         return request.render("website_llm_chat.chatbot_page")
 
+    @staticmethod
+    def _get_user_role() -> str:
+        public_user = request.env.ref("base.public_user")
+        if request.env.user and request.env.user.id != public_user.id:
+            if request.env.user.has_group("hr.group_hr_manager"):
+                return "hr_manager"
+            if request.env.user.has_group("base.group_user"):
+                return "staff"
+        return "visitor"
+
     @classmethod
-    def _stream(cls, message: str):
+    def _stream(cls, message: str, user_role: str = "visitor"):
         # Phase 1: immediate feedback so the browser sees a response right away
         yield b'data: {"type": "thinking"}\n\n'
 
         # Phase 2: blocking call to RocketRide (runs on dedicated asyncio thread)
         try:
-            answer = chat_sync(message)
+            answer = chat_sync(message, user_role)
         except Exception as e:
             _logger.exception("RocketRide chat failed for message: %r", message)
             yield f'data: {json.dumps({"type": "error", "error": str(e)})}\n\n'.encode()
@@ -61,8 +71,9 @@ class WebsiteLLMChatController(http.Controller):
                 yield f'data: {json.dumps({"type": "error", "error": "Message cannot be empty"})}\n\n'.encode()
             return Response(_err(), direct_passthrough=True, headers=headers)
 
+        user_role = self._get_user_role()
         return Response(
-            self._stream(message.strip()),
+            self._stream(message.strip(), user_role),
             direct_passthrough=True,
             headers=headers,
         )
