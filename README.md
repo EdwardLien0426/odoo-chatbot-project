@@ -2,7 +2,7 @@
 
 > Ask your ERP anything. In plain English. No training required.
 
-![Chatbot Demo](docs/demo.png)
+![Chatbot Demo](docs/DEMO.png)
 
 A public-facing AI chatbot built as a native **Odoo 18 module**, powered by a **RocketRide AI pipeline** and **Qwen (Alibaba Cloud)** as the LLM backend. Visitors and staff can query live company data using natural language — no forms, no filters, no manual searching.
 
@@ -22,7 +22,7 @@ No clicks. No training. Just ask.
 
 ## Live Demo
 
-![AI Chatbot answering employee query](docs/demo.png)
+![AI Chatbot answering employee query](docs/DEMO.png)
 
 The chatbot is embedded directly in the Odoo website frontend. Visitors type a question, the system queries live Odoo data via an AI pipeline, and streams back a natural language answer.
 
