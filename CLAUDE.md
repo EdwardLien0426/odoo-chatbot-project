@@ -83,3 +83,9 @@ See `docker-compose.yml` at repo root. Ports needed:
 - No cross-turn conversation memory (each question is a fresh session)
 - Fake streaming only — no true token-level streaming from RocketRide
 - HR search limited to name / department / job_title fields, max 20 results
+
+## Potential Upgrade Path
+
+Replace `tool_http_request → /api/v1/employees/search` with RocketRide `mcp_client` →
+`llm_mcp_server` (Odoo) → `llm.tool` records. This lets the pipeline discover and call
+any Odoo tool without per-endpoint plumbing. See `odoo-llm/CLAUDE.md` for MCP details.
