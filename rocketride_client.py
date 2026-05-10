@@ -40,10 +40,12 @@ async def _init_client() -> None:
         client._debug_message = client.debug_message
     try:
         await client.connect()
-        tokens = {}
-        for role, pipe_file in _PIPE_FILES.items():
-            result = await client.use(filepath=pipe_file, use_existing=True)
-            tokens[role] = result["token"]
+        roles = list(_PIPE_FILES.keys())
+        results = await asyncio.gather(*[
+            client.use(filepath=_PIPE_FILES[r], use_existing=True)
+            for r in roles
+        ])
+        tokens = {r: res["token"] for r, res in zip(roles, results)}
     except Exception:
         _client = None
         _tokens = {}
@@ -66,6 +68,8 @@ def get_client(role: str = "visitor") -> tuple[RocketRideClient, str, asyncio.Ab
             future.result(timeout=30)
 
     token = _tokens.get(role) or _tokens.get("visitor")
+    if token is None:
+        raise RuntimeError(f"No pipeline token for role={role!r} and no visitor fallback")
     return _client, token, _loop
 
 
