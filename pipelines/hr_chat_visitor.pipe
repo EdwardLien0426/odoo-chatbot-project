@@ -1,0 +1,115 @@
+{
+  "components": [
+    {
+      "id": "chat_1",
+      "provider": "chat",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "chat"
+      },
+      "ui": {
+        "position": {"x": 20, "y": 200},
+        "measured": {"width": 150, "height": 89},
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "agent_rocketride_1",
+      "provider": "agent_rocketride",
+      "config": {
+        "instructions": [
+          "You are a company assistant. Help users find information about employees and company data.",
+          "Use the available Odoo MCP tools to look up data. The main tool is 'search_odoo_records'.",
+          "For employee queries, use model='hr.employee' with domain filters on name, department_id.name, or job_title.",
+          "Return clear, concise answers. If no records match, say so."
+        ],
+        "max_waves": 3
+      },
+      "ui": {
+        "position": {"x": 240, "y": 200},
+        "measured": {"width": 150, "height": 108},
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {"lane": "questions", "from": "chat_1"}
+      ]
+    },
+    {
+      "id": "llm_qwen_1",
+      "provider": "llm_qwen",
+      "config": {
+        "model": "qwen-plus",
+        "region": "intl",
+        "apikey": "${ROCKETRIDE_QWEN_API_KEY}"
+      },
+      "ui": {
+        "position": {"x": 130, "y": 360},
+        "measured": {"width": 150, "height": 88},
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {"classType": "llm", "from": "agent_rocketride_1"}
+      ]
+    },
+    {
+      "id": "mcp_client_1",
+      "provider": "mcp_client",
+      "config": {
+        "type": "mcp_client",
+        "serverName": "odoo",
+        "transport": "streamable-http",
+        "http": {
+          "endpoint": "${ROCKETRIDE_MCP_ENDPOINT}",
+          "headers": {},
+          "bearer": "${ROCKETRIDE_MCP_VISITOR_KEY}"
+        }
+      },
+      "ui": {
+        "position": {"x": 300, "y": 360},
+        "measured": {"width": 150, "height": 40},
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {"classType": "tool", "from": "agent_rocketride_1"}
+      ]
+    },
+    {
+      "id": "memory_internal_1",
+      "provider": "memory_internal",
+      "config": {"type": "memory_internal"},
+      "ui": {
+        "position": {"x": 470, "y": 360},
+        "measured": {"width": 150, "height": 40},
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "control": [
+        {"classType": "memory", "from": "agent_rocketride_1"}
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "config": {"laneName": "answers"},
+      "ui": {
+        "position": {"x": 460, "y": 200},
+        "measured": {"width": 150, "height": 66},
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {"lane": "answers", "from": "agent_rocketride_1"}
+      ]
+    }
+  ],
+  "project_id": "a1b2c3d4-0001-4000-8000-visitor000001",
+  "viewport": {"x": 0, "y": 0, "zoom": 1},
+  "version": 1,
+  "source": "chat_1"
+}
