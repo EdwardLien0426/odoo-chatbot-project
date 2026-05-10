@@ -10,8 +10,14 @@
         "type": "chat"
       },
       "ui": {
-        "position": {"x": 20, "y": 200},
-        "measured": {"width": 150, "height": 89},
+        "position": {
+          "x": 20,
+          "y": 200
+        },
+        "measured": {
+          "width": 150,
+          "height": 89
+        },
         "nodeType": "default",
         "formDataValid": true
       }
@@ -22,20 +28,29 @@
       "config": {
         "instructions": [
           "You are a company assistant. Help users find information about employees and company data.",
-          "Use the available Odoo MCP tools to look up data. The main tool is 'search_odoo_records'.",
-          "For employee queries, use model='hr.employee' with domain filters on name, department_id.name, or job_title.",
-          "Return clear, concise answers. If no records match, say so."
+          "You have access to Odoo MCP tools. First call the tool list to discover what tools are available, then use the appropriate tool to answer the question.",
+          "For employee queries, use domain filters on fields like name, department_id.name, or job_title.",
+          "Return clear, concise answers based on the data returned. If no records match, say so."
         ],
         "max_waves": 3
       },
       "ui": {
-        "position": {"x": 240, "y": 200},
-        "measured": {"width": 150, "height": 108},
+        "position": {
+          "x": 240,
+          "y": 200
+        },
+        "measured": {
+          "width": 150,
+          "height": 108
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "input": [
-        {"lane": "questions", "from": "chat_1"}
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
       ]
     },
     {
@@ -47,13 +62,22 @@
         "apikey": "${ROCKETRIDE_QWEN_API_KEY}"
       },
       "ui": {
-        "position": {"x": 130, "y": 360},
-        "measured": {"width": 150, "height": 88},
+        "position": {
+          "x": 130,
+          "y": 360
+        },
+        "measured": {
+          "width": 150,
+          "height": 88
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {"classType": "llm", "from": "agent_rocketride_1"}
+        {
+          "classType": "llm",
+          "from": "agent_rocketride_1"
+        }
       ]
     },
     {
@@ -70,46 +94,81 @@
         }
       },
       "ui": {
-        "position": {"x": 300, "y": 360},
-        "measured": {"width": 150, "height": 40},
+        "position": {
+          "x": 300,
+          "y": 360
+        },
+        "measured": {
+          "width": 150,
+          "height": 40
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {"classType": "tool", "from": "agent_rocketride_1"}
+        {
+          "classType": "tool",
+          "from": "agent_rocketride_1"
+        }
       ]
     },
     {
       "id": "memory_internal_1",
       "provider": "memory_internal",
-      "config": {"type": "memory_internal"},
+      "config": {
+        "type": "memory_internal"
+      },
       "ui": {
-        "position": {"x": 470, "y": 360},
-        "measured": {"width": 150, "height": 40},
+        "position": {
+          "x": 470,
+          "y": 360
+        },
+        "measured": {
+          "width": 150,
+          "height": 40
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "control": [
-        {"classType": "memory", "from": "agent_rocketride_1"}
+        {
+          "classType": "memory",
+          "from": "agent_rocketride_1"
+        }
       ]
     },
     {
       "id": "response_answers_1",
       "provider": "response_answers",
-      "config": {"laneName": "answers"},
+      "config": {
+        "laneName": "answers"
+      },
       "ui": {
-        "position": {"x": 460, "y": 200},
-        "measured": {"width": 150, "height": 66},
+        "position": {
+          "x": 460,
+          "y": 200
+        },
+        "measured": {
+          "width": 150,
+          "height": 66
+        },
         "nodeType": "default",
         "formDataValid": true
       },
       "input": [
-        {"lane": "answers", "from": "agent_rocketride_1"}
+        {
+          "lane": "answers",
+          "from": "agent_rocketride_1"
+        }
       ]
     }
   ],
-  "project_id": "a1b2c3d4-0001-4000-8000-visitor000001",
-  "viewport": {"x": 0, "y": 0, "zoom": 1},
+  "project_id": "95e82834-3e59-4d1f-9eba-6b10190e99bf",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
   "version": 1,
   "source": "chat_1"
 }
