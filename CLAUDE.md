@@ -92,7 +92,7 @@ Only `ROCKETRIDE_*`-prefixed vars are substituted in `.pipe` files.
 - `ROCKETRIDE_URI` env quirk: `dev.sh` exports `ROCKETRIDE_URI=` (empty string) via `set -a; source .env`. Use `os.environ.get("ROCKETRIDE_URI") or "ws://localhost:5565"` — NOT `.get(key, default)`, which ignores the default when the key exists but is empty.
 - `RocketRideClient(persist=True)`: `connect()` silently swallows connection failures; it does NOT raise even if the server is unreachable. Always check `client.is_connected()` after `connect()` to detect failure. Symptom: "Server is not connected" raised at `use()` instead of `connect()`.
 - Three pipelines share one RocketRide WebSocket client — `_init_client()` calls `client.use()` once per pipe file and stores three tokens in `_tokens` dict.
-- Local dev: MCP endpoint is `http://localhost:8069/mcp`. Docker: `http://odoo:8069/mcp` (via `extra_hosts: ["odoo:172.18.0.1"]`).
+- MCP endpoint: always use `http://odoo:8069/mcp` in `.env` — RocketRide runs in Docker and resolves `odoo` → host machine via `extra_hosts: ["odoo:172.18.0.1"]`. `localhost` inside the container is the container itself (connection refused).
 - MCP API keys are generated per Odoo user via **My Profile → Account Security → New MCP Key** — copy immediately, cannot be retrieved later.
 
 ## Docker Setup
