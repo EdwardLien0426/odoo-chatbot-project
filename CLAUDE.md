@@ -88,6 +88,11 @@ Only `ROCKETRIDE_*`-prefixed vars are substituted in `.pipe` files.
 ## Known Gotchas
 
 - `client.use(..., use_existing=True)` is required — without it, Odoo worker restarts trigger "pipeline already running" errors
+- `.pipe` file changes and `.env` changes both require Odoo restart — `rocketride_client.py` singleton is initialized on first HTTP request; no hot-reload
+- Env var substitution (`${ROCKETRIDE_*}`) in `.pipe` files happens in the Odoo process (client-side), NOT in the RocketRide server — restart Odoo, not RocketRide, when `.env` changes
+- `odoo_record_retriever` domain filters don't support dot-notation: `["department_id.name","=","Sales"]` fails; use `["department_id","=",<id>]` or an empty domain `[]`
+- `agent_rocketride` has a hard ~78-char display limit for tool results passed to the LLM — responses longer than ~78 chars are truncated with `...`. For broad employee queries always use `fields=['name']` (no `id`, strips via tool fix) which returns 77 chars for 3 employees. For details, use a domain filter to query 1 employee at a time.
+- `odoo_record_retriever` strips `id` from results when `id` is not in the requested `fields` — this is intentional to keep responses compact within the RocketRide agent 78-char limit.
 - `_debug_message` workaround in `rocketride_client.py` — rocketride 1.0.6 bug where `connection.py` calls `_debug_message` but the method is named `debug_message`
 - `ROCKETRIDE_URI` env quirk: `dev.sh` exports `ROCKETRIDE_URI=` (empty string) via `set -a; source .env`. Use `os.environ.get("ROCKETRIDE_URI") or "ws://localhost:5565"` — NOT `.get(key, default)`, which ignores the default when the key exists but is empty.
 - `RocketRideClient(persist=True)`: `connect()` silently swallows connection failures; it does NOT raise even if the server is unreachable. Always check `client.is_connected()` after `connect()` to detect failure. Symptom: "Server is not connected" raised at `use()` instead of `connect()`.
@@ -108,6 +113,28 @@ Unit tests for `rocketride_client.py` pipe mapping (no Odoo or RocketRide needed
 /home/pohsu/odoo_env/bin/python3 -m unittest tests.test_rocketride_client -v
 ```
 For full Odoo integration tests, use the Odoo test runner with `--test-enable`.
+
+**Test MCP endpoint manually (requires two-step session):**
+```bash
+# Step 1: initialize and capture mcp-session-id
+SESSION=$(curl -s -D - -X POST http://localhost:8069/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <API_KEY>" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1"}}}' \
+  | grep -i mcp-session-id | awk '{print $2}' | tr -d '\r')
+# Step 2: call tools/list with session ID
+curl -s -X POST http://localhost:8069/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <API_KEY>" \
+  -H "mcp-session-id: $SESSION" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+```
+Skipping `initialize` → error `-32600 Missing mcp-session-id header`.
+
+**Test chatbot SSE endpoint:**
+```bash
+curl -s -N --max-time 60 "http://localhost:8069/chatbot/stream?message=who+are+the+employees"
+```
 
 ## What's Missing / Known Limitations
 

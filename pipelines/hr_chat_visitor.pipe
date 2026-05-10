@@ -16,7 +16,7 @@
         },
         "measured": {
           "width": 150,
-          "height": 89
+          "height": 66
         },
         "nodeType": "default",
         "formDataValid": true
@@ -29,9 +29,10 @@
         "instructions": [
           "You are a company assistant. Help users find information about employees and company data.",
           "You have access to Odoo MCP tools. Use the odoo_record_retriever tool to fetch data.",
-          "Domain filters use direct field names only — never use dot-notation (e.g. use 'department_id' not 'department_id.name'). For employee queries, filter on 'name' or 'job_title'. To get all employees, use an empty domain [].",
-          "If a tool call fails, retry with a simpler domain (e.g. []) before giving up.",
-          "Return clear, concise answers. List employee names and their job titles or department."
+          "To list all employees use: model='hr.employee', fields=['name'], domain=[], limit=100. This returns a compact list of names.",
+          "To get details for a specific employee use: domain=[['name','=','Employee Name']], fields=['name','job_title','department_id'].",
+          "IMPORTANT: The tool response is a complete JSON array — every object is a valid complete record. Count and list ALL items.",
+          "IMPORTANT: This is a stateless chatbot. Never ask follow-up questions. Answer directly and completely in a single response."
         ],
         "max_waves": 3
       },
@@ -42,7 +43,7 @@
         },
         "measured": {
           "width": 150,
-          "height": 108
+          "height": 86
         },
         "nodeType": "default",
         "formDataValid": true
@@ -69,7 +70,7 @@
         },
         "measured": {
           "width": 150,
-          "height": 88
+          "height": 66
         },
         "nodeType": "default",
         "formDataValid": true
@@ -164,7 +165,7 @@
       ]
     }
   ],
-  "project_id": "bcbf2e10-e0c2-4b68-95f1-2786de2c3433",
+  "project_id": "fd2f8c70-9e99-493d-96ce-27fef6434960",
   "viewport": {
     "x": 0,
     "y": 0,
